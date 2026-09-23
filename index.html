@@ -1,0 +1,978 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>世界時刻ビューア</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #f4f6fb;
+    --surface: #ffffff;
+    --text: #14213d;
+    --text-muted: #5c6b84;
+    --accent: #b9790a;
+    --accent-soft: #f2e2c4;
+    --line: #dfe4ee;
+    --danger: #a3402f;
+    --focus: #14213d;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #0f1626;
+      --surface: #161f36;
+      --text: #edeff4;
+      --text-muted: #93a0ba;
+      --accent: #f0b429;
+      --accent-soft: #3a3018;
+      --line: #29334a;
+      --danger: #e08a75;
+      --focus: #f0b429;
+    }
+  }
+
+  :root[data-theme="dark"] {
+    --bg: #0f1626;
+    --surface: #161f36;
+    --text: #edeff4;
+    --text-muted: #93a0ba;
+    --accent: #f0b429;
+    --accent-soft: #3a3018;
+    --line: #29334a;
+    --danger: #e08a75;
+    --focus: #f0b429;
+  }
+
+  * { box-sizing: border-box; }
+
+  html {
+    scroll-padding-top: env(safe-area-inset-top, 0px);
+  }
+
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'IBM Plex Mono', 'Courier New', monospace;
+    padding-top: env(safe-area-inset-top, 0px);
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+    -webkit-font-smoothing: antialiased;
+    transition: background 0.2s ease, color 0.2s ease;
+  }
+
+  .wrap {
+    max-width: 640px;
+    margin: 0 auto;
+    padding: 48px 24px 80px;
+  }
+
+  header {
+    margin-bottom: 36px;
+  }
+
+  .header-top {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 16px;
+  }
+
+  .lang-btn {
+    flex-shrink: 0;
+    margin-top: 4px;
+  }
+
+  h1 {
+    font-family: 'Fraunces', Georgia, 'Times New Roman', serif;
+    font-optical-sizing: auto;
+    font-weight: 600;
+    font-size: clamp(28px, 6vw, 38px);
+    letter-spacing: -0.01em;
+    margin: 0 0 10px;
+    line-height: 1.15;
+  }
+
+  .lede {
+    color: var(--text-muted);
+    font-size: 14px;
+    line-height: 1.7;
+    max-width: 52ch;
+    margin: 0;
+  }
+
+  .lede .caveat {
+    display: block;
+    margin-top: 4px;
+    font-size: 12.5px;
+    opacity: 0.85;
+  }
+
+  .control {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 4px;
+    padding: 22px 22px 24px;
+    margin-bottom: 34px;
+  }
+
+  .control-top {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 14px;
+    flex-wrap: wrap;
+  }
+
+  .control-label {
+    font-family: 'Fraunces', Georgia, serif;
+    font-size: 15px;
+    color: var(--text-muted);
+  }
+
+  .diff-badge {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 12px;
+    color: var(--accent);
+    margin-left: 8px;
+    font-weight: 600;
+  }
+
+  .readout {
+    font-size: 30px;
+    font-weight: 500;
+    letter-spacing: 0.02em;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .readout small {
+    font-size: 14px;
+    color: var(--accent);
+    font-weight: 600;
+    margin-left: 6px;
+  }
+
+  input[type="range"] {
+    -webkit-appearance: none;
+    width: 100%;
+    height: 4px;
+    border-radius: 2px;
+    background: var(--line);
+    outline: none;
+    margin: 6px 0 16px;
+  }
+
+  input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: var(--accent);
+    cursor: pointer;
+    border: 3px solid var(--surface);
+    box-shadow: 0 0 0 1px var(--accent);
+    transition: transform 0.12s ease;
+  }
+
+  input[type="range"]::-webkit-slider-thumb:hover { transform: scale(1.12); }
+
+  input[type="range"]::-moz-range-thumb {
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: var(--accent);
+    cursor: pointer;
+    border: 3px solid var(--surface);
+    box-shadow: 0 0 0 1px var(--accent);
+  }
+
+  input[type="range"]:focus-visible {
+    box-shadow: 0 0 0 2px var(--bg), 0 0 0 4px var(--focus);
+  }
+
+  .control-actions {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+
+  button {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 13px;
+    cursor: pointer;
+    border-radius: 3px;
+  }
+
+  .btn {
+    background: transparent;
+    border: 1px solid var(--line);
+    color: var(--text);
+    padding: 7px 12px;
+  }
+
+  .btn:hover { border-color: var(--accent); color: var(--accent); }
+
+  .btn:focus-visible, .icon-btn:focus-visible, select:focus-visible, .btn-add:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 2px var(--bg), 0 0 0 4px var(--focus);
+  }
+
+  .list-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 4px;
+  }
+
+  .list-header-label {
+    font-family: 'Fraunces', Georgia, serif;
+    font-size: 14px;
+    color: var(--text-muted);
+  }
+
+  .list-header-actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .list-header-actions .copy-hint {
+    position: static;
+    transform: none;
+  }
+
+  .list {
+    border-top: 1px solid var(--line);
+  }
+
+  .row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 16px 2px;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .row-left {
+    min-width: 0;
+  }
+
+  .row-name {
+    font-family: 'Fraunces', Georgia, serif;
+    font-size: 18px;
+    line-height: 1.3;
+  }
+
+  .row-offset {
+    font-size: 12px;
+    color: var(--text-muted);
+    margin-top: 2px;
+  }
+
+  .row-right {
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+    flex-shrink: 0;
+  }
+
+  .row-time {
+    font-size: 26px;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: 0.01em;
+    transition: color 0.15s ease;
+    cursor: pointer;
+    border-bottom: 1px dashed transparent;
+  }
+
+  .row-time:hover {
+    color: var(--accent);
+    border-bottom-color: var(--accent);
+  }
+
+  .row-time:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 2px var(--bg), 0 0 0 4px var(--focus);
+    border-radius: 2px;
+  }
+
+  .copy-hint {
+    font-size: 11px;
+    color: var(--accent);
+    opacity: 0;
+    transform: translateY(-2px);
+    transition: opacity 0.15s ease, transform 0.15s ease;
+    white-space: nowrap;
+  }
+
+  .copy-hint.show {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .row-daydiff {
+    font-size: 11px;
+    color: var(--danger);
+    white-space: nowrap;
+  }
+
+  .icon-btn {
+    background: none;
+    border: none;
+    color: var(--text-muted);
+    font-size: 18px;
+    line-height: 1;
+    padding: 4px 6px;
+  }
+
+  .icon-btn:hover { color: var(--danger); }
+
+  .empty {
+    padding: 32px 2px;
+    color: var(--text-muted);
+    font-size: 14px;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .add-row {
+    display: flex;
+    gap: 8px;
+    padding-top: 18px;
+    flex-wrap: wrap;
+  }
+
+  select {
+    flex: 1;
+    min-width: 180px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 13px;
+    padding: 9px 10px;
+    background: var(--surface);
+    color: var(--text);
+    border: 1px solid var(--line);
+    border-radius: 3px;
+  }
+
+  .btn-add {
+    background: var(--accent);
+    color: var(--surface);
+    border: 1px solid var(--accent);
+    padding: 9px 16px;
+    font-weight: 600;
+  }
+
+  .btn-add:hover { opacity: 0.88; }
+
+  .btn-add:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+  }
+
+  footer {
+    margin-top: 28px;
+    font-size: 12px;
+    color: var(--text-muted);
+  }
+
+  @media (max-width: 420px) {
+    .row-time { font-size: 22px; }
+    .readout { font-size: 25px; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="header-top">
+      <h1 id="pageTitle">世界時刻ビューア</h1>
+      <button class="btn lang-btn" id="btnLang">English</button>
+    </div>
+    <p class="lede">
+      <span id="pageLede">UTCの基準時刻をひとつ決めると、選んだ国や地域の現地時刻がまとめて分かります。</span>
+      <span class="caveat" id="pageCaveat">※ 標準時ベースの固定オフセットで計算しています(サマータイムは考慮していません)</span>
+    </p>
+  </header>
+
+  <div class="control">
+    <div class="control-top">
+      <span class="control-label"><span id="controlLabelText">基準時刻(UTC)</span><span class="diff-badge" id="diffBadge"></span></span>
+      <div class="readout" id="readout">00:00<small>UTC</small></div>
+    </div>
+    <input type="range" id="slider" min="-1440" max="2880" step="5" value="0" aria-label="Minutes from 0:00 UTC">
+    <div class="control-actions">
+      <button class="btn" id="btnNow">今のUTC時刻を使う</button>
+      <button class="btn" id="btnMinus">−1時間</button>
+      <button class="btn" id="btnPlus">+1時間</button>
+      <button class="btn" id="btnReset">0時にリセット</button>
+      <button class="btn" id="btnFormat">24時間表記にする</button>
+    </div>
+  </div>
+
+  <div class="list-header">
+    <span class="list-header-label" id="listHeaderLabel">選択した国・地域</span>
+    <div class="list-header-actions">
+      <span class="copy-hint" id="copyAllHint">コピーしました</span>
+      <button class="btn" id="btnCopyAll">まとめてコピー</button>
+    </div>
+  </div>
+  <div class="list" id="list"></div>
+
+  <div class="add-row">
+    <select id="countrySelect" aria-label="追加する国・地域"></select>
+    <button class="btn-add" id="btnAddCountry">追加</button>
+  </div>
+
+  <footer id="footerText">選んだ国・地域はこの端末に保存され、次に開いたときも復元されます。</footer>
+</div>
+
+<script>
+(function () {
+  "use strict";
+
+  var ZONES = [
+    { name: "日本", region: "東京", nameEn: "Japan", regionEn: "Tokyo", offset: 9 },
+    { name: "韓国", region: "ソウル", nameEn: "South Korea", regionEn: "Seoul", offset: 9 },
+    { name: "中国", region: "北京", nameEn: "China", regionEn: "Beijing", offset: 8 },
+    { name: "台湾", region: "台北", nameEn: "Taiwan", regionEn: "Taipei", offset: 8 },
+    { name: "香港", region: "香港", nameEn: "Hong Kong", regionEn: "Hong Kong", offset: 8 },
+    { name: "シンガポール", region: "シンガポール", nameEn: "Singapore", regionEn: "Singapore", offset: 8 },
+    { name: "マレーシア", region: "クアラルンプール", nameEn: "Malaysia", regionEn: "Kuala Lumpur", offset: 8 },
+    { name: "フィリピン", region: "マニラ", nameEn: "Philippines", regionEn: "Manila", offset: 8 },
+    { name: "タイ", region: "バンコク", nameEn: "Thailand", regionEn: "Bangkok", offset: 7 },
+    { name: "ベトナム", region: "ハノイ", nameEn: "Vietnam", regionEn: "Hanoi", offset: 7 },
+    { name: "インドネシア", region: "ジャカルタ", nameEn: "Indonesia", regionEn: "Jakarta", offset: 7 },
+    { name: "ミャンマー", region: "ヤンゴン", nameEn: "Myanmar", regionEn: "Yangon", offset: 6.5 },
+    { name: "バングラデシュ", region: "ダッカ", nameEn: "Bangladesh", regionEn: "Dhaka", offset: 6 },
+    { name: "ネパール", region: "カトマンズ", nameEn: "Nepal", regionEn: "Kathmandu", offset: 5.75 },
+    { name: "インド", region: "ニューデリー", nameEn: "India", regionEn: "New Delhi", offset: 5.5 },
+    { name: "スリランカ", region: "コロンボ", nameEn: "Sri Lanka", regionEn: "Colombo", offset: 5.5 },
+    { name: "パキスタン", region: "イスラマバード", nameEn: "Pakistan", regionEn: "Islamabad", offset: 5 },
+    { name: "アラブ首長国連邦", region: "ドバイ", nameEn: "United Arab Emirates", regionEn: "Dubai", offset: 4 },
+    { name: "イラン", region: "テヘラン", nameEn: "Iran", regionEn: "Tehran", offset: 3.5 },
+    { name: "ロシア", region: "モスクワ", nameEn: "Russia", regionEn: "Moscow", offset: 3 },
+    { name: "サウジアラビア", region: "リヤド", nameEn: "Saudi Arabia", regionEn: "Riyadh", offset: 3 },
+    { name: "ケニア", region: "ナイロビ", nameEn: "Kenya", regionEn: "Nairobi", offset: 3 },
+    { name: "トルコ", region: "イスタンブール", nameEn: "Turkey", regionEn: "Istanbul", offset: 3 },
+    { name: "エジプト", region: "カイロ", nameEn: "Egypt", regionEn: "Cairo", offset: 2 },
+    { name: "南アフリカ", region: "ヨハネスブルグ", nameEn: "South Africa", regionEn: "Johannesburg", offset: 2 },
+    { name: "ドイツ", region: "ベルリン", nameEn: "Germany", regionEn: "Berlin", offset: 1 },
+    { name: "フランス", region: "パリ", nameEn: "France", regionEn: "Paris", offset: 1 },
+    { name: "イタリア", region: "ローマ", nameEn: "Italy", regionEn: "Rome", offset: 1 },
+    { name: "スペイン", region: "マドリード", nameEn: "Spain", regionEn: "Madrid", offset: 1 },
+    { name: "ナイジェリア", region: "ラゴス", nameEn: "Nigeria", regionEn: "Lagos", offset: 1 },
+    { name: "イギリス", region: "ロンドン", nameEn: "United Kingdom", regionEn: "London", offset: 0 },
+    { name: "ポルトガル", region: "リスボン", nameEn: "Portugal", regionEn: "Lisbon", offset: 0 },
+    { name: "ブラジル", region: "サンパウロ", nameEn: "Brazil", regionEn: "São Paulo", offset: -3 },
+    { name: "アルゼンチン", region: "ブエノスアイレス", nameEn: "Argentina", regionEn: "Buenos Aires", offset: -3 },
+    { name: "カナダ", region: "トロント", nameEn: "Canada", regionEn: "Toronto", offset: -5 },
+    { name: "アメリカ", region: "ニューヨーク", nameEn: "United States", regionEn: "New York", offset: -5 },
+    { name: "メキシコ", region: "メキシコシティ", nameEn: "Mexico", regionEn: "Mexico City", offset: -6 },
+    { name: "アメリカ", region: "シカゴ", nameEn: "United States", regionEn: "Chicago", offset: -6 },
+    { name: "アメリカ", region: "デンバー", nameEn: "United States", regionEn: "Denver", offset: -7 },
+    { name: "アメリカ", region: "ロサンゼルス", nameEn: "United States", regionEn: "Los Angeles", offset: -8 },
+    { name: "アメリカ", region: "アンカレジ", nameEn: "United States", regionEn: "Anchorage", offset: -9 },
+    { name: "アメリカ", region: "ハワイ", nameEn: "United States", regionEn: "Hawaii", offset: -10 },
+    { name: "オーストラリア", region: "アデレード", nameEn: "Australia", regionEn: "Adelaide", offset: 9.5 },
+    { name: "オーストラリア", region: "シドニー", nameEn: "Australia", regionEn: "Sydney", offset: 10 },
+    { name: "ニュージーランド", region: "オークランド", nameEn: "New Zealand", regionEn: "Auckland", offset: 12 },
+    { name: "フィジー", region: "スバ", nameEn: "Fiji", regionEn: "Suva", offset: 12 }
+  ];
+
+  var I18N = {
+    ja: {
+      htmlLang: "ja",
+      title: "世界時刻ビューア",
+      lede: "UTCの基準時刻をひとつ決めると、選んだ国や地域の現地時刻がまとめて分かります。",
+      caveat: "※ 標準時ベースの固定オフセットで計算しています(サマータイムは考慮していません)",
+      controlLabel: "基準時刻(UTC)",
+      btnLang: "English",
+      btnNow: "今のUTC時刻を使う",
+      btnMinus: "−1時間",
+      btnPlus: "+1時間",
+      btnReset: "0時にリセット",
+      btnFormatTo24: "24時間表記にする",
+      btnFormatToAmpm: "AM/PM表記にする",
+      listHeaderLabel: "選択した国・地域",
+      btnCopyAll: "まとめてコピー",
+      copiedHint: "コピーしました",
+      emptyText: "国や地域が選ばれていません。下のメニューから追加してください。",
+      copyTitle: "クリックでコピー",
+      addSelectAria: "追加する国・地域",
+      addButtonText: "追加",
+      allAddedText: "すべて追加済みです",
+      footerText: "選んだ国・地域はこの端末に保存され、次に開いたときも復元されます。",
+      removeAria: function (label) { return label + "を削除"; },
+      timeAria: function (label, timeText) { return label + "の時刻 " + timeText + "、クリックでコピー"; },
+      dayLabel: function (dayDiff) {
+        if (dayDiff === 0) return "";
+        return dayDiff > 0 ? "翌" + (dayDiff > 1 ? dayDiff : "") + "日" : (Math.abs(dayDiff) > 1 ? Math.abs(dayDiff) : "") + "前日";
+      },
+      diffBadge: function (sign, h, m) { return "0時から" + sign + h + (m ? ":" + pad2(m) : "") + "時間"; },
+      zoneLabel: function (zone) { return zone.region + (zone.name !== zone.region ? "・" + zone.name : ""); },
+      optionLabel: function (zone) { return zone.region + (zone.name !== zone.region ? "(" + zone.name + ")" : ""); }
+    },
+    en: {
+      htmlLang: "en",
+      title: "World Time Viewer",
+      lede: "Set one reference time in UTC to see the local time in every country or region you've selected.",
+      caveat: "Note: calculated using fixed standard-time offsets (daylight saving time is not applied).",
+      controlLabel: "Reference time (UTC)",
+      btnLang: "日本語",
+      btnNow: "Use current UTC time",
+      btnMinus: "\u22121 hour",
+      btnPlus: "+1 hour",
+      btnReset: "Reset to 0:00",
+      btnFormatTo24: "Switch to 24-hour",
+      btnFormatToAmpm: "Switch to AM/PM",
+      listHeaderLabel: "Selected countries & regions",
+      btnCopyAll: "Copy all",
+      copiedHint: "Copied!",
+      emptyText: "No countries selected yet. Add one from the menu below.",
+      copyTitle: "Click to copy",
+      addSelectAria: "Add a country or region",
+      addButtonText: "Add",
+      allAddedText: "All added",
+      footerText: "Your selection is saved on this device and restored next time you open this page.",
+      removeAria: function (label) { return "Remove " + label; },
+      timeAria: function (label, timeText) { return label + " time " + timeText + ", click to copy"; },
+      dayLabel: function (dayDiff) {
+        if (dayDiff === 0) return "";
+        var n = Math.abs(dayDiff);
+        return (dayDiff > 0 ? "+" : "\u2212") + n + "d";
+      },
+      diffBadge: function (sign, h, m) { return sign + h + (m ? ":" + pad2(m) : "") + "h from 0:00"; },
+      zoneLabel: function (zone) { return zone.regionEn + (zone.nameEn !== zone.regionEn ? " (" + zone.nameEn + ")" : ""); },
+      optionLabel: function (zone) { return zone.regionEn + (zone.nameEn !== zone.regionEn ? " (" + zone.nameEn + ")" : ""); }
+    }
+  };
+
+  var STORAGE_KEY = "world-time-viewer:selected";
+  var STORAGE_OFFSET_KEY = "world-time-viewer:slider";
+  var STORAGE_FORMAT_KEY = "world-time-viewer:format";
+  var STORAGE_LANG_KEY = "world-time-viewer:lang";
+
+  function loadLang() {
+    try {
+      var raw = window.localStorage.getItem(STORAGE_LANG_KEY);
+      if (raw === "ja" || raw === "en") return raw;
+    } catch (e) { /* ignore */ }
+    return "ja";
+  }
+
+  function saveLang(lang) {
+    try { window.localStorage.setItem(STORAGE_LANG_KEY, lang); }
+    catch (e) { /* ignore */ }
+  }
+
+  function loadFormat() {
+    try {
+      var raw = window.localStorage.getItem(STORAGE_FORMAT_KEY);
+      if (raw === "24h" || raw === "ampm") return raw;
+    } catch (e) { /* ignore */ }
+    return "ampm";
+  }
+
+  function saveFormat(fmt) {
+    try { window.localStorage.setItem(STORAGE_FORMAT_KEY, fmt); }
+    catch (e) { /* ignore */ }
+  }
+
+  function zoneKey(z) { return z.name + "|" + z.region; }
+  function findZone(key) {
+    for (var i = 0; i < ZONES.length; i++) {
+      if (zoneKey(ZONES[i]) === key) return ZONES[i];
+    }
+    return null;
+  }
+
+  function loadSelected() {
+    try {
+      var raw = window.localStorage.getItem(STORAGE_KEY);
+      if (raw) {
+        var arr = JSON.parse(raw);
+        if (Array.isArray(arr) && arr.length) return arr;
+      }
+    } catch (e) { /* storage unavailable or empty, fall through to default */ }
+    return ["日本|東京", "イギリス|ロンドン", "アメリカ|ニューヨーク", "インド|ニューデリー"];
+  }
+
+  function saveSelected(keys) {
+    try { window.localStorage.setItem(STORAGE_KEY, JSON.stringify(keys)); }
+    catch (e) { /* ignore: private/incognito or storage full */ }
+  }
+
+  function loadSliderValue() {
+    try {
+      var raw = window.localStorage.getItem(STORAGE_OFFSET_KEY);
+      if (raw !== null) {
+        var v = parseInt(raw, 10);
+        if (!isNaN(v)) return v;
+      }
+    } catch (e) { /* ignore */ }
+    return 0;
+  }
+
+  function saveSliderValue(v) {
+    try { window.localStorage.setItem(STORAGE_OFFSET_KEY, String(v)); }
+    catch (e) { /* ignore */ }
+  }
+
+  var selectedKeys = loadSelected();
+  var timeFormat = loadFormat();
+  var lang = loadLang();
+
+  function t() { return I18N[lang]; }
+
+  var slider = document.getElementById("slider");
+  var readout = document.getElementById("readout");
+  var list = document.getElementById("list");
+  var countrySelect = document.getElementById("countrySelect");
+  var btnAddCountry = document.getElementById("btnAddCountry");
+  var btnFormat = document.getElementById("btnFormat");
+  var btnLang = document.getElementById("btnLang");
+  var pageTitleEl = document.getElementById("pageTitle");
+  var pageLedeEl = document.getElementById("pageLede");
+  var pageCaveatEl = document.getElementById("pageCaveat");
+  var controlLabelEl = document.getElementById("controlLabelText");
+  var btnNow = document.getElementById("btnNow");
+  var btnMinus = document.getElementById("btnMinus");
+  var btnPlus = document.getElementById("btnPlus");
+  var btnReset = document.getElementById("btnReset");
+  var listHeaderLabelEl = document.getElementById("listHeaderLabel");
+  var footerTextEl = document.getElementById("footerText");
+
+  slider.value = loadSliderValue();
+
+  function copyToClipboard(text) {
+    function fallbackCopy() {
+      try {
+        var ta = document.createElement("textarea");
+        ta.value = text;
+        ta.style.position = "fixed";
+        ta.style.top = "-1000px";
+        ta.style.opacity = "0";
+        document.body.appendChild(ta);
+        ta.focus();
+        ta.select();
+        document.execCommand("copy");
+        document.body.removeChild(ta);
+      } catch (e) { /* clipboard unavailable; user can still select the text manually */ }
+    }
+    try {
+      if (navigator.clipboard && window.isSecureContext) {
+        navigator.clipboard.writeText(text).catch(fallbackCopy);
+      } else {
+        fallbackCopy();
+      }
+    } catch (e) {
+      fallbackCopy();
+    }
+  }
+
+  function pad2(n) { return (n < 10 ? "0" : "") + n; }
+
+  function formatOffset(offset) {
+    var sign = offset >= 0 ? "+" : "\u2212";
+    var abs = Math.abs(offset);
+    var h = Math.floor(abs);
+    var m = Math.round((abs - h) * 60);
+    return "UTC" + sign + h + (m ? ":" + pad2(m) : "");
+  }
+
+  function minutesToHHMM(mins) {
+    var h = Math.floor(mins / 60);
+    var m = mins % 60;
+    return pad2(h) + ":" + pad2(m);
+  }
+
+  function minutesToAMPM(mins) {
+    var h = Math.floor(mins / 60);
+    var m = mins % 60;
+    var period = h < 12 ? "AM" : "PM";
+    var h12 = h % 12;
+    if (h12 === 0) h12 = 12;
+    return h12 + ":" + pad2(m) + " " + period;
+  }
+
+  function formatTime(mins) {
+    return timeFormat === "ampm" ? minutesToAMPM(mins) : minutesToHHMM(mins);
+  }
+
+  var diffBadge = document.getElementById("diffBadge");
+
+  function formatDiffLabel(baseMin) {
+    var sign = baseMin < 0 ? "\u2212" : "+";
+    var abs = Math.abs(baseMin);
+    var h = Math.floor(abs / 60);
+    var m = abs % 60;
+    return t().diffBadge(sign, h, m);
+  }
+
+  function renderReadout() {
+    var baseMin = parseInt(slider.value, 10);
+    var normalized = ((baseMin % 1440) + 1440) % 1440;
+    readout.innerHTML = formatTime(normalized) + "<small>UTC</small>";
+    diffBadge.textContent = formatDiffLabel(baseMin);
+  }
+
+  function computeRows() {
+    var baseMin = parseInt(slider.value, 10);
+    var baseDayOffset = Math.floor(baseMin / 1440);
+    var baseMinNormalized = ((baseMin % 1440) + 1440) % 1440;
+
+    return selectedKeys.map(function (key) {
+      var zone = findZone(key);
+      if (!zone) return null;
+
+      var totalMin = baseMinNormalized + Math.round(zone.offset * 60);
+      var dayDiff = Math.floor(totalMin / 1440) + baseDayOffset;
+      var localMin = ((totalMin % 1440) + 1440) % 1440;
+
+      return {
+        key: key,
+        zone: zone,
+        timeText: formatTime(localMin),
+        dayDiffLabel: t().dayLabel(dayDiff)
+      };
+    }).filter(Boolean);
+  }
+
+  function buildSummaryText() {
+    var rows = computeRows();
+    return rows.map(function (r) {
+      var label = t().optionLabel(r.zone);
+      return label + ": " + r.timeText + (r.dayDiffLabel ? " (" + r.dayDiffLabel + ")" : "");
+    }).join("\n");
+  }
+
+  function renderList() {
+    list.innerHTML = "";
+    var rows = computeRows();
+
+    if (rows.length === 0) {
+      var empty = document.createElement("div");
+      empty.className = "empty";
+      empty.textContent = t().emptyText;
+      list.appendChild(empty);
+      return;
+    }
+
+    rows.forEach(function (rowData) {
+      var zone = rowData.zone;
+      var key = rowData.key;
+      var label = t().zoneLabel(zone);
+
+      var row = document.createElement("div");
+      row.className = "row";
+
+      var left = document.createElement("div");
+      left.className = "row-left";
+      var nameEl = document.createElement("div");
+      nameEl.className = "row-name";
+      nameEl.textContent = label;
+      var offsetEl = document.createElement("div");
+      offsetEl.className = "row-offset";
+      offsetEl.textContent = formatOffset(zone.offset);
+      left.appendChild(nameEl);
+      left.appendChild(offsetEl);
+
+      var right = document.createElement("div");
+      right.className = "row-right";
+
+      var timeText = rowData.timeText;
+      var timeEl = document.createElement("div");
+      timeEl.className = "row-time";
+      timeEl.textContent = timeText;
+      timeEl.tabIndex = 0;
+      timeEl.setAttribute("role", "button");
+      timeEl.title = t().copyTitle;
+      timeEl.setAttribute("aria-label", t().timeAria(label, timeText));
+
+      var hint = document.createElement("span");
+      hint.className = "copy-hint";
+      hint.textContent = t().copiedHint;
+
+      function doCopy() {
+        copyToClipboard(timeText);
+        hint.classList.add("show");
+        clearTimeout(timeEl._hintTimer);
+        timeEl._hintTimer = setTimeout(function () { hint.classList.remove("show"); }, 1200);
+      }
+
+      timeEl.addEventListener("click", doCopy);
+      timeEl.addEventListener("keydown", function (e) {
+        if (e.key === "Enter" || e.key === " ") { e.preventDefault(); doCopy(); }
+      });
+
+      right.appendChild(hint);
+      right.appendChild(timeEl);
+
+      if (rowData.dayDiffLabel) {
+        var diffEl = document.createElement("div");
+        diffEl.className = "row-daydiff";
+        diffEl.textContent = rowData.dayDiffLabel;
+        right.appendChild(diffEl);
+      }
+
+      var removeBtn = document.createElement("button");
+      removeBtn.className = "icon-btn";
+      removeBtn.setAttribute("aria-label", t().removeAria(label));
+      removeBtn.textContent = "\u00D7";
+      removeBtn.addEventListener("click", function () {
+        selectedKeys = selectedKeys.filter(function (k) { return k !== key; });
+        saveSelected(selectedKeys);
+        renderList();
+        renderCountrySelect();
+      });
+      right.appendChild(removeBtn);
+
+      row.appendChild(left);
+      row.appendChild(right);
+      list.appendChild(row);
+    });
+  }
+
+  function renderCountrySelect() {
+    countrySelect.innerHTML = "";
+    countrySelect.setAttribute("aria-label", t().addSelectAria);
+    var available = ZONES.filter(function (z) { return selectedKeys.indexOf(zoneKey(z)) === -1; });
+
+    if (available.length === 0) {
+      var opt = document.createElement("option");
+      opt.textContent = t().allAddedText;
+      opt.disabled = true;
+      countrySelect.appendChild(opt);
+      countrySelect.disabled = true;
+      btnAddCountry.disabled = true;
+      return;
+    }
+
+    countrySelect.disabled = false;
+    btnAddCountry.disabled = false;
+
+    available
+      .slice()
+      .sort(function (a, b) { return a.offset - b.offset; })
+      .forEach(function (z) {
+        var opt = document.createElement("option");
+        opt.value = zoneKey(z);
+        opt.textContent = t().optionLabel(z) + " \u2014 " + formatOffset(z.offset);
+        countrySelect.appendChild(opt);
+      });
+  }
+
+  function update() {
+    renderReadout();
+    renderList();
+  }
+
+  slider.addEventListener("input", function () {
+    saveSliderValue(slider.value);
+    update();
+  });
+
+  var SLIDER_MIN = parseInt(slider.min, 10);
+  var SLIDER_MAX = parseInt(slider.max, 10);
+
+  function clamp(v) { return Math.max(SLIDER_MIN, Math.min(SLIDER_MAX, v)); }
+
+  document.getElementById("btnPlus").addEventListener("click", function () {
+    var v = clamp(parseInt(slider.value, 10) + 60);
+    slider.value = v;
+    saveSliderValue(v);
+    update();
+  });
+
+  document.getElementById("btnMinus").addEventListener("click", function () {
+    var v = clamp(parseInt(slider.value, 10) - 60);
+    slider.value = v;
+    saveSliderValue(v);
+    update();
+  });
+
+  document.getElementById("btnReset").addEventListener("click", function () {
+    slider.value = 0;
+    saveSliderValue(0);
+    update();
+  });
+
+  document.getElementById("btnNow").addEventListener("click", function () {
+    var now = new Date();
+    var mins = now.getUTCHours() * 60 + now.getUTCMinutes();
+    mins = Math.round(mins / 5) * 5;
+    slider.value = mins;
+    saveSliderValue(mins);
+    update();
+  });
+
+  function updateFormatButtonLabel() {
+    btnFormat.textContent = timeFormat === "ampm" ? t().btnFormatTo24 : t().btnFormatToAmpm;
+  }
+
+  btnFormat.addEventListener("click", function () {
+    timeFormat = timeFormat === "ampm" ? "24h" : "ampm";
+    saveFormat(timeFormat);
+    updateFormatButtonLabel();
+    update();
+  });
+
+  var btnCopyAll = document.getElementById("btnCopyAll");
+  var copyAllHint = document.getElementById("copyAllHint");
+
+  btnCopyAll.addEventListener("click", function () {
+    var text = buildSummaryText();
+    if (!text) return;
+    copyToClipboard(text);
+    copyAllHint.classList.add("show");
+    clearTimeout(btnCopyAll._hintTimer);
+    btnCopyAll._hintTimer = setTimeout(function () { copyAllHint.classList.remove("show"); }, 1500);
+  });
+
+  btnAddCountry.addEventListener("click", function () {
+    var key = countrySelect.value;
+    if (!key || selectedKeys.indexOf(key) !== -1) return;
+    selectedKeys.push(key);
+    saveSelected(selectedKeys);
+    renderList();
+    renderCountrySelect();
+  });
+
+  function applyLanguage() {
+    var tr = t();
+    document.documentElement.lang = tr.htmlLang;
+    document.title = tr.title;
+    pageTitleEl.textContent = tr.title;
+    pageLedeEl.textContent = tr.lede;
+    pageCaveatEl.textContent = tr.caveat;
+    controlLabelEl.textContent = tr.controlLabel;
+    btnLang.textContent = tr.btnLang;
+    btnNow.textContent = tr.btnNow;
+    btnMinus.textContent = tr.btnMinus;
+    btnPlus.textContent = tr.btnPlus;
+    btnReset.textContent = tr.btnReset;
+    listHeaderLabelEl.textContent = tr.listHeaderLabel;
+    btnCopyAll.textContent = tr.btnCopyAll;
+    copyAllHint.textContent = tr.copiedHint;
+    btnAddCountry.textContent = tr.addButtonText;
+    footerTextEl.textContent = tr.footerText;
+    updateFormatButtonLabel();
+    renderCountrySelect();
+    update();
+  }
+
+  btnLang.addEventListener("click", function () {
+    lang = lang === "ja" ? "en" : "ja";
+    saveLang(lang);
+    applyLanguage();
+  });
+
+  applyLanguage();
+})();
+</script>
+</body>
+</html>
