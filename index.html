@@ -1,3 +1,4 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#faf9f5;color:#141413}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
 <!DOCTYPE html>
 <html lang="ja">
 <head>
@@ -435,52 +436,52 @@
   "use strict";
 
   var ZONES = [
-    { name: "日本", region: "東京", nameEn: "Japan", regionEn: "Tokyo", offset: 9 },
-    { name: "韓国", region: "ソウル", nameEn: "South Korea", regionEn: "Seoul", offset: 9 },
-    { name: "中国", region: "北京", nameEn: "China", regionEn: "Beijing", offset: 8 },
-    { name: "台湾", region: "台北", nameEn: "Taiwan", regionEn: "Taipei", offset: 8 },
-    { name: "香港", region: "香港", nameEn: "Hong Kong", regionEn: "Hong Kong", offset: 8 },
-    { name: "シンガポール", region: "シンガポール", nameEn: "Singapore", regionEn: "Singapore", offset: 8 },
-    { name: "マレーシア", region: "クアラルンプール", nameEn: "Malaysia", regionEn: "Kuala Lumpur", offset: 8 },
-    { name: "フィリピン", region: "マニラ", nameEn: "Philippines", regionEn: "Manila", offset: 8 },
-    { name: "タイ", region: "バンコク", nameEn: "Thailand", regionEn: "Bangkok", offset: 7 },
-    { name: "ベトナム", region: "ハノイ", nameEn: "Vietnam", regionEn: "Hanoi", offset: 7 },
-    { name: "インドネシア", region: "ジャカルタ", nameEn: "Indonesia", regionEn: "Jakarta", offset: 7 },
-    { name: "ミャンマー", region: "ヤンゴン", nameEn: "Myanmar", regionEn: "Yangon", offset: 6.5 },
-    { name: "バングラデシュ", region: "ダッカ", nameEn: "Bangladesh", regionEn: "Dhaka", offset: 6 },
-    { name: "ネパール", region: "カトマンズ", nameEn: "Nepal", regionEn: "Kathmandu", offset: 5.75 },
-    { name: "インド", region: "ニューデリー", nameEn: "India", regionEn: "New Delhi", offset: 5.5 },
-    { name: "スリランカ", region: "コロンボ", nameEn: "Sri Lanka", regionEn: "Colombo", offset: 5.5 },
-    { name: "パキスタン", region: "イスラマバード", nameEn: "Pakistan", regionEn: "Islamabad", offset: 5 },
-    { name: "アラブ首長国連邦", region: "ドバイ", nameEn: "United Arab Emirates", regionEn: "Dubai", offset: 4 },
-    { name: "イラン", region: "テヘラン", nameEn: "Iran", regionEn: "Tehran", offset: 3.5 },
-    { name: "ロシア", region: "モスクワ", nameEn: "Russia", regionEn: "Moscow", offset: 3 },
-    { name: "サウジアラビア", region: "リヤド", nameEn: "Saudi Arabia", regionEn: "Riyadh", offset: 3 },
-    { name: "ケニア", region: "ナイロビ", nameEn: "Kenya", regionEn: "Nairobi", offset: 3 },
-    { name: "トルコ", region: "イスタンブール", nameEn: "Turkey", regionEn: "Istanbul", offset: 3 },
-    { name: "エジプト", region: "カイロ", nameEn: "Egypt", regionEn: "Cairo", offset: 2 },
-    { name: "南アフリカ", region: "ヨハネスブルグ", nameEn: "South Africa", regionEn: "Johannesburg", offset: 2 },
-    { name: "ドイツ", region: "ベルリン", nameEn: "Germany", regionEn: "Berlin", offset: 1 },
-    { name: "フランス", region: "パリ", nameEn: "France", regionEn: "Paris", offset: 1 },
-    { name: "イタリア", region: "ローマ", nameEn: "Italy", regionEn: "Rome", offset: 1 },
-    { name: "スペイン", region: "マドリード", nameEn: "Spain", regionEn: "Madrid", offset: 1 },
-    { name: "ナイジェリア", region: "ラゴス", nameEn: "Nigeria", regionEn: "Lagos", offset: 1 },
-    { name: "イギリス", region: "ロンドン", nameEn: "United Kingdom", regionEn: "London", offset: 0 },
-    { name: "ポルトガル", region: "リスボン", nameEn: "Portugal", regionEn: "Lisbon", offset: 0 },
-    { name: "ブラジル", region: "サンパウロ", nameEn: "Brazil", regionEn: "São Paulo", offset: -3 },
-    { name: "アルゼンチン", region: "ブエノスアイレス", nameEn: "Argentina", regionEn: "Buenos Aires", offset: -3 },
-    { name: "カナダ", region: "トロント", nameEn: "Canada", regionEn: "Toronto", offset: -5 },
-    { name: "アメリカ", region: "ニューヨーク", nameEn: "United States", regionEn: "New York", offset: -5 },
-    { name: "メキシコ", region: "メキシコシティ", nameEn: "Mexico", regionEn: "Mexico City", offset: -6 },
-    { name: "アメリカ", region: "シカゴ", nameEn: "United States", regionEn: "Chicago", offset: -6 },
-    { name: "アメリカ", region: "デンバー", nameEn: "United States", regionEn: "Denver", offset: -7 },
-    { name: "アメリカ", region: "ロサンゼルス", nameEn: "United States", regionEn: "Los Angeles", offset: -8 },
-    { name: "アメリカ", region: "アンカレジ", nameEn: "United States", regionEn: "Anchorage", offset: -9 },
-    { name: "アメリカ", region: "ハワイ", nameEn: "United States", regionEn: "Hawaii", offset: -10 },
-    { name: "オーストラリア", region: "アデレード", nameEn: "Australia", regionEn: "Adelaide", offset: 9.5 },
-    { name: "オーストラリア", region: "シドニー", nameEn: "Australia", regionEn: "Sydney", offset: 10 },
-    { name: "ニュージーランド", region: "オークランド", nameEn: "New Zealand", regionEn: "Auckland", offset: 12 },
-    { name: "フィジー", region: "スバ", nameEn: "Fiji", regionEn: "Suva", offset: 12 }
+    { name: "日本", region: "東京", nameEn: "Japan", codeEn: "JPN", regionEn: "Tokyo", offset: 9 },
+    { name: "韓国", region: "ソウル", nameEn: "South Korea", codeEn: "KOR", regionEn: "Seoul", offset: 9 },
+    { name: "中国", region: "北京", nameEn: "China", codeEn: "CHN", regionEn: "Beijing", offset: 8 },
+    { name: "台湾", region: "台北", nameEn: "Taiwan", codeEn: "TWN", regionEn: "Taipei", offset: 8 },
+    { name: "香港", region: "香港", nameEn: "Hong Kong", codeEn: "HKG", regionEn: "Hong Kong", offset: 8 },
+    { name: "シンガポール", region: "シンガポール", nameEn: "Singapore", codeEn: "SGP", regionEn: "Singapore", offset: 8 },
+    { name: "マレーシア", region: "クアラルンプール", nameEn: "Malaysia", codeEn: "MYS", regionEn: "Kuala Lumpur", offset: 8 },
+    { name: "フィリピン", region: "マニラ", nameEn: "Philippines", codeEn: "PHL", regionEn: "Manila", offset: 8 },
+    { name: "タイ", region: "バンコク", nameEn: "Thailand", codeEn: "THA", regionEn: "Bangkok", offset: 7 },
+    { name: "ベトナム", region: "ハノイ", nameEn: "Vietnam", codeEn: "VNM", regionEn: "Hanoi", offset: 7 },
+    { name: "インドネシア", region: "ジャカルタ", nameEn: "Indonesia", codeEn: "IDN", regionEn: "Jakarta", offset: 7 },
+    { name: "ミャンマー", region: "ヤンゴン", nameEn: "Myanmar", codeEn: "MMR", regionEn: "Yangon", offset: 6.5 },
+    { name: "バングラデシュ", region: "ダッカ", nameEn: "Bangladesh", codeEn: "BGD", regionEn: "Dhaka", offset: 6 },
+    { name: "ネパール", region: "カトマンズ", nameEn: "Nepal", codeEn: "NPL", regionEn: "Kathmandu", offset: 5.75 },
+    { name: "インド", region: "ニューデリー", nameEn: "India", codeEn: "IND", regionEn: "New Delhi", offset: 5.5 },
+    { name: "スリランカ", region: "コロンボ", nameEn: "Sri Lanka", codeEn: "LKA", regionEn: "Colombo", offset: 5.5 },
+    { name: "パキスタン", region: "イスラマバード", nameEn: "Pakistan", codeEn: "PAK", regionEn: "Islamabad", offset: 5 },
+    { name: "アラブ首長国連邦", region: "ドバイ", nameEn: "United Arab Emirates", codeEn: "ARE", regionEn: "Dubai", offset: 4 },
+    { name: "イラン", region: "テヘラン", nameEn: "Iran", codeEn: "IRN", regionEn: "Tehran", offset: 3.5 },
+    { name: "ロシア", region: "モスクワ", nameEn: "Russia", codeEn: "RUS", regionEn: "Moscow", offset: 3 },
+    { name: "サウジアラビア", region: "リヤド", nameEn: "Saudi Arabia", codeEn: "SAU", regionEn: "Riyadh", offset: 3 },
+    { name: "ケニア", region: "ナイロビ", nameEn: "Kenya", codeEn: "KEN", regionEn: "Nairobi", offset: 3 },
+    { name: "トルコ", region: "イスタンブール", nameEn: "Turkey", codeEn: "TUR", regionEn: "Istanbul", offset: 3 },
+    { name: "エジプト", region: "カイロ", nameEn: "Egypt", codeEn: "EGY", regionEn: "Cairo", offset: 2 },
+    { name: "南アフリカ", region: "ヨハネスブルグ", nameEn: "South Africa", codeEn: "ZAF", regionEn: "Johannesburg", offset: 2 },
+    { name: "ドイツ", region: "ベルリン", nameEn: "Germany", codeEn: "DEU", regionEn: "Berlin", offset: 1 },
+    { name: "フランス", region: "パリ", nameEn: "France", codeEn: "FRA", regionEn: "Paris", offset: 1 },
+    { name: "イタリア", region: "ローマ", nameEn: "Italy", codeEn: "ITA", regionEn: "Rome", offset: 1 },
+    { name: "スペイン", region: "マドリード", nameEn: "Spain", codeEn: "ESP", regionEn: "Madrid", offset: 1 },
+    { name: "ナイジェリア", region: "ラゴス", nameEn: "Nigeria", codeEn: "NGA", regionEn: "Lagos", offset: 1 },
+    { name: "イギリス", region: "ロンドン", nameEn: "United Kingdom", codeEn: "GBR", regionEn: "London", offset: 0 },
+    { name: "ポルトガル", region: "リスボン", nameEn: "Portugal", codeEn: "PRT", regionEn: "Lisbon", offset: 0 },
+    { name: "ブラジル", region: "サンパウロ", nameEn: "Brazil", codeEn: "BRA", regionEn: "São Paulo", offset: -3 },
+    { name: "アルゼンチン", region: "ブエノスアイレス", nameEn: "Argentina", codeEn: "ARG", regionEn: "Buenos Aires", offset: -3 },
+    { name: "カナダ", region: "トロント", nameEn: "Canada", codeEn: "CAN", regionEn: "Toronto", offset: -5 },
+    { name: "アメリカ", region: "ニューヨーク", nameEn: "United States", codeEn: "USA", regionEn: "New York", offset: -5 },
+    { name: "メキシコ", region: "メキシコシティ", nameEn: "Mexico", codeEn: "MEX", regionEn: "Mexico City", offset: -6 },
+    { name: "アメリカ", region: "シカゴ", nameEn: "United States", codeEn: "USA", regionEn: "Chicago", offset: -6 },
+    { name: "アメリカ", region: "デンバー", nameEn: "United States", codeEn: "USA", regionEn: "Denver", offset: -7 },
+    { name: "アメリカ", region: "ロサンゼルス", nameEn: "United States", codeEn: "USA", regionEn: "Los Angeles", offset: -8 },
+    { name: "アメリカ", region: "アンカレジ", nameEn: "United States", codeEn: "USA", regionEn: "Anchorage", offset: -9 },
+    { name: "アメリカ", region: "ハワイ", nameEn: "United States", codeEn: "USA", regionEn: "Hawaii", offset: -10 },
+    { name: "オーストラリア", region: "アデレード", nameEn: "Australia", codeEn: "AUS", regionEn: "Adelaide", offset: 9.5 },
+    { name: "オーストラリア", region: "シドニー", nameEn: "Australia", codeEn: "AUS", regionEn: "Sydney", offset: 10 },
+    { name: "ニュージーランド", region: "オークランド", nameEn: "New Zealand", codeEn: "NZL", regionEn: "Auckland", offset: 12 },
+    { name: "フィジー", region: "スバ", nameEn: "Fiji", codeEn: "FJI", regionEn: "Suva", offset: 12 }
   ];
 
   var I18N = {
@@ -546,8 +547,8 @@
         return (dayDiff > 0 ? "+" : "\u2212") + n + "d";
       },
       diffBadge: function (sign, h, m) { return sign + h + (m ? ":" + pad2(m) : "") + "h from 0:00"; },
-      zoneLabel: function (zone) { return zone.regionEn + (zone.nameEn !== zone.regionEn ? " (" + zone.nameEn + ")" : ""); },
-      optionLabel: function (zone) { return zone.regionEn + (zone.nameEn !== zone.regionEn ? " (" + zone.nameEn + ")" : ""); }
+      zoneLabel: function (zone) { return zone.regionEn + " (" + zone.codeEn + ")"; },
+      optionLabel: function (zone) { return zone.regionEn + " (" + zone.codeEn + ")"; }
     }
   };
 
@@ -976,3 +977,5 @@
 </script>
 </body>
 </html>
+
+</body></html>
